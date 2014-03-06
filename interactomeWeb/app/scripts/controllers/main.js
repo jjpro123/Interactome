@@ -24,12 +24,6 @@ app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService,
     $scope.maxSize = 5;
     $scope.filteredPapers = [];
 
-    $scope.getLikes = function() {
-        console.log(AwsService.getPrefsArray($scope.username, 'Likes'));
-    }
-
-    $scope.getLikes();
-    
     $scope.numPages = function() {
         return Math.ceil($scope.papers.length / $scope.numPerPage);
     };
@@ -73,6 +67,13 @@ app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService,
             });
         }
     };
+
+    $scope.getLikes = function() {
+        console.log(AwsService.getPrefsArray($scope.username, 'Likes'));
+    }
+
+    $scope.getLikes();
+    
 
     $scope.showAbstract = function(abTitle, firstName, lastName, abText) {
         $scope.modalTitle = abTitle;

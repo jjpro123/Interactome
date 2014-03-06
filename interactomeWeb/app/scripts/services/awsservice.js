@@ -137,7 +137,7 @@ app.provider('AwsService', function() {
 
                 var getParams = {
                     AttributesToGet: [
-                    attribute
+                    'Likes'
                     ],
                     Key: {
                         "User": {
@@ -149,17 +149,17 @@ app.provider('AwsService', function() {
                     }                    
                 };
 
-                array = recLikesTable.getItem(getParams, function(err, data){
+                recLikesTable.getItem(getParams, function(err, data){
                     if(err)
-                        console.log(err)
+                        console.log(err);
                     else
-                        return data.Item.attribute.SS;
+                        for(var i = 0; i < data.Item.Likes.SS.length; i++)
+                            array[i] = data.Item.Likes.SS[i];
+                        console.log(array);
                 });
 
-                console.log(array);
-                
                 return array;
-            }
+            },
 
             updateDynamoPref: function(paperId, liked, username) {
                 var recLikesTable = new AWS.DynamoDB({
