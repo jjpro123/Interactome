@@ -126,41 +126,40 @@ app.provider('AwsService', function() {
                 });
             },
 
-            /*
-            getDynamoLikes: function(username){
-                var recLikesTable = new AWS.DynamoDB({ params: { TableName: 'Recommendation_Likes' } });
-                var params = {
+            getPrefsArray: function(username, attribute) {
+                var recLikesTable = new AWS.DynamoDB({
+                    params: {
+                        TableName: 'Recommendation_Likes'
+                    }
+                });
+
+                var array = [];
+
+                var getParams = {
                     AttributesToGet: [
-                    'Likes'
+                    attribute
                     ],
                     Key: {
                         "User": {
                             "S": username
                         },
-                        "Context": { 
+                        "Context": {
                             "S": 'GeneralThread'
                         }
-                    }
-                }; 
+                    }                    
+                };
 
-                recLikesTable.getItem(params, function(err, data) {
-                    if (err)
-                        console.log("Error: " + err);
-                    else {
-                        console.log(data);
-                    }
+                array = recLikesTable.getItem(getParams, function(err, data){
+                    if(err)
+                        console.log(err)
+                    else
+                        return data.Item.attribute.SS;
                 });
+
+                console.log(array);
+                
+                return array;
             }
-            */
-
-            /*
-            getDynamoDislikes: function(){
-
-            }
-            */
-
-            // Adds the abstractId into either the "Likes" or "Dislikes" attribute in "Interactions."
-            // Was unsure about naming conventions with get, set, post etc.
 
             updateDynamoPref: function(paperId, liked, username) {
                 var recLikesTable = new AWS.DynamoDB({

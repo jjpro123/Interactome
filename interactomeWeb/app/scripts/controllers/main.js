@@ -9,6 +9,8 @@ app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService,
     console.log("made conteoller");
     $scope.papers = [];
 
+    $scope.likedPapers = [];
+    $scope.dislikedPapers = [];
 
     $scope.absRecd = null;
     $scope.modalTitle = null;
@@ -22,15 +24,15 @@ app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService,
     $scope.maxSize = 5;
     $scope.filteredPapers = [];
 
+    $scope.getLikes = function() {
+        console.log(AwsService.getPrefsArray($scope.username, 'Likes'));
+    }
 
-
-
+    $scope.getLikes();
+    
     $scope.numPages = function() {
         return Math.ceil($scope.papers.length / $scope.numPerPage);
     };
-
-
-
 
     $scope.$watch('currentPage + numPerPage + papers', function() {
         var begin = (($scope.currentPage - 1) * $scope.numPerPage),
