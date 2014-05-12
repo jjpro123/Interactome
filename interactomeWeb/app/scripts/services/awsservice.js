@@ -99,6 +99,7 @@ app.provider('AwsService', function() {
                 return topicDefer.promise;
             },
 
+
             deleteTopic: function(topicid) {
                 var defer = $q.defer();
                 var dynamodbB = new AWS.DynamoDB();
@@ -116,6 +117,39 @@ app.provider('AwsService', function() {
                     if (err) {
                         console.log(err, err.stack);
                         defer.reject('Could not delete topic');
+                    }
+                    else {
+                        defer.resolve();
+                    }
+                });
+                return defer.promise;
+            },
+
+            renameTopic: function(topicid, topicname) {
+                var defer = $q.defer();
+                var dynamodb = new AWS.DynamoDB();
+
+                var renameParams = {
+                    Key: {
+                        Id: {
+                            S: topicid,
+                        },
+                    },
+                    TableName: 'Topic',
+                    AttributeUpdates: {
+                        Name: {
+                            Action: 'PUT',
+                            Value: {
+                                S: topicname
+                            }
+                        },
+                    }
+
+                };
+                dynamodb.updateItem(renameParams, function(err, data) {
+                    if (err) {
+                        console.log(err, err.stack);
+                        defer.reject('Could not rename topic');
                     }
                     else {
                         defer.resolve();
@@ -240,6 +274,74 @@ app.provider('AwsService', function() {
                 });
 
                 return topicDefer.promise;
+            },
+
+            saveTopicPaper: function(topicid, paperid) {
+                var savePaperDefer = $q.defer();
+                var dynamodb = new AWS.DynamoDB();
+
+                var updateParams = {
+                    Key: {
+                        Id: {
+                            S: topicid
+                        },
+                    },
+                    TableName: 'Topic',
+                    AttributeUpdates: {
+                        List: {
+                            Action: 'ADD',
+                            Value: {
+                                SS: [paperid],
+                            }
+                        }
+                    }
+                };
+
+                dynamodb.updateItem(updateParams, function(err, data) {
+                    if (err) {
+                        console.log(err, err.stack);
+                        savePaperDefer.reject('Cannot update Topic table');
+                    }
+                    else {
+                        savePaperDefer.resolve();
+                    }
+                });
+
+                return savePaperDefer.promise;
+            },
+
+            deleteTopicPaper: function(topicid, paperid) {
+                var deletePaperDefer = $q.defer();
+                var dynamodb = new AWS.DynamoDB();
+
+                var deleteParams = {
+                    Key: {
+                        Id: {
+                            S: topicid
+                        },
+                    },
+                    TableName: 'Topic',
+                    AttributeUpdates: {
+                        List: {
+                            Action: 'DELETE',
+                            Value: {
+                                SS: [paperid],
+                            }
+                        }
+                    }
+                };
+
+                dynamodb.updateItem(deleteParams, function(err,data) {
+                    if (err) {
+                        console.log(err, err.stack);
+                        deletePaperDefer.reject('Cannot update Topic table');
+                    }
+                    else {
+                        deletePaperDefer.resolve();
+                    }
+                })
+
+                return deletePaperDefer.promise;
             },
 
             // Gets the next limit number of papers from dynamo

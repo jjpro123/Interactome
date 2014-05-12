@@ -78,7 +78,7 @@ body {
   }
 }
 
-.pagination {
+.clickable-pointer {
   cursor: pointer;
 }
 
@@ -126,4 +126,14 @@ body {
   top: 5px;
   width: 400px;
   position: fixed;
+}
+
+.abstractDrag {
+  max-height: 40px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.abstract-selected {
+  background-color: #96EB96;
 }
