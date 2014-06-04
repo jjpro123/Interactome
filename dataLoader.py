@@ -49,7 +49,7 @@ logging.basicConfig(filename='dataLoader.log', level=logging.INFO, format='%(asc
 # connect to solr
 solr = pysolr.Solr('http://ec2-54-201-190-162.us-west-2.compute.amazonaws.com:8983/solr/', timeout=10)
 
-#solr.delete(q='*:*')
+
 
 ''' 
     Parses the csv file for ACCESS_KEY_EXCEL_FIELD and SECRET_KEY_EXCEL_FIELD.
@@ -149,14 +149,6 @@ def addUsers(excelFileName):
             dynamoPaperId = abstractToPaperDict[hashKey] if (hashKey in abstractToPaperDict) else ""
             try:
 
-                solr.add([
-                    {
-                    'id': userId,
-                    'lastName': lastname,
-                    'firstName': firstname,
-                    'institution': institution
-                    }])
-
                 # If new user (email not in dynamo already)
                 if(userId == ''):
                     sequenceNumber = getSequence()
@@ -174,6 +166,14 @@ def addUsers(excelFileName):
                     if(dynamoPaperId != ""):
                         newItem['Papers'] = set([dynamoPaperId])
                     usersTable.put_item(data=newItem)
+
+                    solr.add([
+                        {
+                        'id': userId,
+                        'lastName': lastname,
+                        'firstName': firstname,
+                        'institution': institution
+                        }])
 
                 # Else it's an old user and has a paper to add to them
                 elif(hashKey in abstractToPaperDict):
@@ -322,6 +322,8 @@ def addAbstracts(excelFileName):
 
 
 def main(argv=sys.argv):
+
+    solr.delete(q='*:*')
 
     parser = argparse.ArgumentParser(description='Process optional download flags')
 
